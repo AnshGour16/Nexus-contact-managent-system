@@ -90,5 +90,8 @@ app.put('/api/contacts/:id', auth, async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+if (!process.env.VERCEL) {
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+module.exports = app;
