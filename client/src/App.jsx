@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import './App.css';
 import Register from './components/Register';
@@ -17,7 +17,7 @@ function App() {
   const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
   const API_URL = `${API_BASE}/api/contacts`;
 
-  const fetchContacts = async () => {
+  const fetchContacts = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       const res = await axios.get(API_URL, {
@@ -29,10 +29,11 @@ function App() {
       console.error("Fetch error", err);
       setLoading(false);
     }
-  };
+  }, [API_URL]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/set-state-in-effect
-  useEffect(() => { if (isAuthenticated) fetchContacts(); }, [isAuthenticated]);
+  useEffect(() => {
+    if (isAuthenticated) fetchContacts();
+  }, [isAuthenticated, fetchContacts]);
 
   const validate = (name, value) => {
     let msg = '';
