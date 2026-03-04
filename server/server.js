@@ -35,6 +35,11 @@ app.use('/api/auth', authRouter);
 
 const auth = require('./middleware/auth');
 
+// 0. Base route to verify server is running
+app.get('/', (req, res) => {
+    res.json({ message: 'Welcome to the Nexus Contact Management API. The server is running successfully!' });
+});
+
 // 1. GET: Fetch all contacts
 app.get('/api/contacts', auth, async (req, res) => {
     try {
