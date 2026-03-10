@@ -8,7 +8,6 @@ Welcome to the **Nexus Contacts** platform. This project has been significantly 
 *   **Aesthetic Theme**: Features a sophisticated "Soft Frost & Pearl" light theme with subtle gradients.
 *   **True Glassmorphism**: High-end frosted glass cards (`backdrop-filter`) provide depth and elegance.
 *   **Interactive Elements**: Floating animations on hover, neo-morphic shadows, animated gradient text headers, and premium styled input components.
-*   **Responsive**: Full mobile responsiveness for seamless interaction on desktop or phone.
 
 ### Robust Backend & Security
 *   **JWT Authentication**: Secure user registration and login using JSON Web Tokens (JWT) and Bcrypt hashing.
@@ -55,6 +54,28 @@ A full-stack Contact Management application allowing users to securely register,
 
 3. **Setup the Frontend:**
    ```bash
+
+## ✅ Error Checking & GitHub Push
+
+Before pushing to GitHub, ensure your project is error-free:
+
+- Run `npm run lint` in both `client` and `server` folders (if lint scripts are available).
+- Run the app locally and verify all features work.
+
+To push your project to GitHub:
+
+1. Stage all changes:
+    ```bash
+    git add .
+    ```
+2. Commit your changes:
+    ```bash
+    git commit -m "Update README and ensure error-free project"
+    ```
+3. Push to your repository:
+    ```bash
+    git push origin main
+    ```
    cd ../client
    npm install
    # (Optional) Create a .env file to set VITE_API_URL if your backend is NOT running on port 5000
