@@ -3,8 +3,11 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
+const { OAuth2Client } = require('google-auth-library');
+const axios = require('axios');
 
 const router = express.Router();
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Register
 router.post('/register', [
@@ -57,6 +60,30 @@ router.post('/login', [
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).json({ error: err.message });
+  }
+});
+
+// Google Login
+router.post('/google', async (req, res) => {
+  const { credential } = req.body;
+  try {
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const { email, name } = payload;
+
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = new User({ name, email, authProvider: 'google' });
+      await user.save();
+    }
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    res.json({ token });
+  } catch (err) {
+    console.error('Google Auth Error:', err);
+    res.status(500).json({ error: 'Failed to authenticate with Google' });
   }
 });
 

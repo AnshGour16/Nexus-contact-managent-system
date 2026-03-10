@@ -3,6 +3,7 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
+import { GoogleLogin } from '@react-oauth/google';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -23,6 +24,18 @@ const Login = ({ onLogin }) => {
   };
 
   const handleShowPassword = () => setShowPassword((prev) => !prev);
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const res = await axios.post(`${API_URL}/api/auth/google`, {
+        credential: credentialResponse.credential
+      });
+      localStorage.setItem('token', res.data.token);
+      if (onLogin) onLogin();
+    } catch (err) {
+      setSubmitError('Google login failed');
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -88,6 +101,15 @@ const Login = ({ onLogin }) => {
         </div>
         <button type="submit" className="btn btn-primary" disabled={loading}>{loading ? 'Logging in...' : 'Login'}</button>
         {submitError && <div style={{ color: 'var(--danger)', marginTop: '15px', textAlign: 'center' }}>{submitError}</div>}
+
+        <div style={{ textAlign: 'center', margin: '20px 0', color: '#6b7280' }}>OR</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => setSubmitError('Google Auth Failed')}
+            useOneTap
+          />
+        </div>
       </form>
     </div>
   );

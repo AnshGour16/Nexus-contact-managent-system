@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { GoogleLogin } from '@react-oauth/google';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -28,6 +29,18 @@ const Register = ({ onRegister }) => {
     setForm({ ...form, [name]: value });
     if (name === 'password') {
       setStrength(evaluatePassword(value));
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const res = await axios.post(`${API_URL}/api/auth/google`, {
+        credential: credentialResponse.credential
+      });
+      localStorage.setItem('token', res.data.token);
+      onRegister();
+    } catch (err) {
+      setError('Google registration failed: ' + (err.response?.data?.error || err.message));
     }
   };
 
@@ -77,6 +90,15 @@ const Register = ({ onRegister }) => {
           {loading ? 'Registering...' : 'Create Account'}
         </button>
         {error && <div style={{ color: 'var(--danger)', marginTop: '15px', textAlign: 'center' }}>{error}</div>}
+
+        <div style={{ textAlign: 'center', margin: '20px 0', color: '#6b7280' }}>OR</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => setError('Google Auth Failed')}
+            useOneTap
+          />
+        </div>
       </form>
     </div>
   );

@@ -12,7 +12,11 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
+    required: false, // Optional for Google/Facebook logic
+  },
+  authProvider: {
+    type: String,
+    default: 'local' // Can be 'local', 'google', 'facebook'
   },
   createdAt: {
     type: Date,

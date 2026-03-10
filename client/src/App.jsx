@@ -3,6 +3,7 @@ import axios from 'axios';
 import './App.css';
 import Register from './components/Register';
 import Login from './components/Login';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 function App() {
   const [contacts, setContacts] = useState([]);
@@ -125,13 +126,15 @@ function App() {
 
   if (!isAuthenticated) {
     return (
-      <div className="auth-wrapper">
-        <div className="auth-toggle">
-          <button onClick={() => setAuthMode('login')} className={authMode === 'login' ? 'active' : ''}>Login</button>
-          <button onClick={() => setAuthMode('register')} className={authMode === 'register' ? 'active' : ''}>Register</button>
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID"}>
+        <div className="auth-wrapper">
+          <div className="auth-toggle">
+            <button onClick={() => setAuthMode('login')} className={authMode === 'login' ? 'active' : ''}>Login</button>
+            <button onClick={() => setAuthMode('register')} className={authMode === 'register' ? 'active' : ''}>Register</button>
+          </div>
+          {authMode === 'login' ? <Login onLogin={() => setIsAuthenticated(true)} /> : <Register onRegister={() => setIsAuthenticated(true)} />}
         </div>
-        {authMode === 'login' ? <Login onLogin={() => setIsAuthenticated(true)} /> : <Register onRegister={() => setIsAuthenticated(true)} />}
-      </div>
+      </GoogleOAuthProvider>
     );
   }
 
