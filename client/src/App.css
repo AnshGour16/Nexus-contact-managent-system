@@ -61,6 +61,19 @@
   }
 }
 
+/* Floating Logo Animation */
+@keyframes floatLogo {
+  0% {
+    transform: translateY(0px) rotate(-10deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(-10deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(-10deg);
+  }
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -117,10 +130,12 @@ body {
   box-shadow: 0 10px 25px rgba(99, 102, 241, 0.2);
   transform: rotate(-10deg);
   transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: floatLogo 4s ease-in-out infinite;
 }
 
 .header-section:hover .brand-logo {
   transform: rotate(0deg) scale(1.1);
+  animation: none;
 }
 
 .brand-logo svg {
@@ -239,6 +254,7 @@ textarea:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 4px var(--primary-glow), inset 0 2px 4px rgba(0, 0, 0, 0.02);
   background: rgba(255, 255, 255, 0.9) !important;
+  transform: scale(1.01);
 }
 
 textarea {
@@ -305,6 +321,10 @@ textarea {
 
 .btn-secondary:hover {
   background: rgba(255, 255, 255, 0.8);
+}
+
+.btn:active, .btn-icon:active, .social-btn:active {
+  transform: scale(0.95) !important;
 }
 
 /* List Styles */
@@ -387,6 +407,11 @@ textarea {
   margin-right: 16px;
   flex-shrink: 0;
   box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.contact-item:hover .avatar {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .contact-info {
@@ -415,12 +440,14 @@ textarea {
   display: flex;
   gap: 10px;
   flex-shrink: 0;
-  opacity: 0.5;
-  transition: opacity 0.3s;
+  opacity: 0;
+  transform: translateX(10px);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .contact-item:hover .actions {
   opacity: 1;
+  transform: translateX(0);
 }
 
 .btn-icon {
