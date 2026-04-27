@@ -68,10 +68,10 @@ function App() {
     try {
       const token = localStorage.getItem('token');
       if (editingId) {
-        await axios.put(`${API_URL}/${editingId}`, formData, {
+        const res = await axios.put(`${API_URL}/${editingId}`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        setContacts(contacts.map(c => c._id === editingId ? { ...formData, _id: editingId } : c));
+        setContacts(contacts.map(c => c._id === editingId ? res.data : c));
         setEditingId(null);
       } else {
         const res = await axios.post(API_URL, formData, {
@@ -87,7 +87,12 @@ function App() {
   };
 
   const handleEdit = (contact) => {
-    setFormData(contact);
+    setFormData({
+      name: contact.name,
+      email: contact.email,
+      phone: contact.phone,
+      message: contact.message || ''
+    });
     setEditingId(contact._id);
     setErrors({}); // Clear errors when starting edit
   };
@@ -108,8 +113,8 @@ function App() {
   const getInitials = (name) => name ? name.charAt(0).toUpperCase() : '?';
 
   const filteredContacts = contacts.filter(c =>
-    c.name.toLowerCase().includes(search.toLowerCase()) ||
-    c.phone.includes(search)
+    c.name?.toLowerCase().includes(search.toLowerCase()) ||
+    c.phone?.includes(search)
   );
 
   // --- FEATURE: STRICT BUTTON LOGIC ---
@@ -148,7 +153,7 @@ function App() {
         </div>
         <h1>Nexus Contacts</h1>
         <p>Your professional network, dynamically organized.</p>
-        <button className="btn btn-secondary" style={{ width: 'auto', padding: '8px 20px', marginTop: '20px', borderRadius: '30px', fontSize: '0.9rem' }} onClick={() => { localStorage.removeItem('token'); setIsAuthenticated(false); }}>
+        <button className="btn btn-secondary" style={{ width: 'auto', padding: '8px 20px', marginTop: '20px', borderRadius: '30px', fontSize: '0.9rem' }} onClick={() => { localStorage.removeItem('token'); setIsAuthenticated(false); setContacts([]); }}>
           Sign Out
         </button>
       </div>
