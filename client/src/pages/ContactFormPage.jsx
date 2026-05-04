@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import axios from 'axios';
-import { ArrowLeft, Upload, User, Mail, Phone, MapPin, Calendar, Tag, MessageSquare, Linkedin, Twitter, Github } from 'lucide-react';
+import { ArrowLeft, Upload, User, Mail, Phone, MapPin, Calendar, Tag, MessageSquare, Link as LinkIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const ContactFormPage = () => {
@@ -204,7 +204,7 @@ const ContactFormPage = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">LinkedIn Profile</label>
               <div className="relative">
-                <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                 <input name="social_linkedin" value={formData.socialLinks.linkedin} onChange={handleChange} className="w-full pl-9 pr-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="linkedin.com/in/username" />
               </div>
             </div>
@@ -212,7 +212,7 @@ const ContactFormPage = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Twitter Username</label>
               <div className="relative">
-                <Twitter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                 <input name="social_twitter" value={formData.socialLinks.twitter} onChange={handleChange} className="w-full pl-9 pr-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="@username" />
               </div>
             </div>

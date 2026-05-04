@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { GoogleLogin } from '@react-oauth/google';
+import { motion } from 'framer-motion';
+import { User, Mail, Lock, Eye, EyeOff, UserPlus, AlertCircle } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const Register = ({ onRegister }) => {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [strength, setStrength] = useState({ score: 0, text: '', color: '' });
@@ -24,9 +28,10 @@ const Register = ({ onRegister }) => {
     return { score: 100, text: 'Strong', color: '#10b981' };
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
+    setError('');
     if (name === 'password') {
       setStrength(evaluatePassword(value));
     }
@@ -38,14 +43,19 @@ const Register = ({ onRegister }) => {
         credential: credentialResponse.credential
       });
       localStorage.setItem('token', res.data.token);
-      onRegister();
+      toast.success("Account created successfully!");
+      if (onRegister) onRegister();
     } catch (err) {
-      setError('Google registration failed: ' + (err.response?.data?.error || err.message));
+      setError('Google Auth Failed: Check Authorized Origins in Cloud Console.');
     }
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!form.name || !form.email || !form.password) {
+      setError("Please fill in all fields");
+      return;
+    }
     if (strength.score < 66) {
       setError('Please use a stronger password (at least medium strength).');
       return;
@@ -55,7 +65,8 @@ const Register = ({ onRegister }) => {
     try {
       const res = await axios.post(`${API_URL}/api/auth/register`, form);
       localStorage.setItem('token', res.data.token);
-      onRegister();
+      toast.success("Welcome to Nexus!");
+      if (onRegister) onRegister();
     } catch (err) {
       setError(err.response?.data?.error || 'Registration failed');
     }
@@ -63,44 +74,138 @@ const Register = ({ onRegister }) => {
   };
 
   return (
-    <div className="card animate-fade-in" style={{ maxWidth: '400px', margin: '0 auto', width: '100%' }}>
-      <form onSubmit={handleSubmit}>
-        <h2 style={{ justifyContent: 'center', marginBottom: '30px' }}>Create Account</h2>
-        <div className="form-group">
-          <label>Name</label>
-          <input name="name" placeholder="John Doe" value={form.name} onChange={handleChange} required />
-        </div>
-        <div className="form-group">
-          <label>Email</label>
-          <input name="email" type="email" placeholder="john@example.com" value={form.email} onChange={handleChange} required />
-        </div>
-        <div className="form-group">
-          <label>Password</label>
-          <input name="password" type="password" placeholder="Min 6 chars, uppercase, and number" value={form.password} onChange={handleChange} required minLength={6} />
-          {form.password && (
-            <>
-              <div className="password-strength-container">
-                <div className="password-strength-bar" style={{ width: `${strength.score}%`, backgroundColor: strength.color }}></div>
-              </div>
-              <span className="password-feedback" style={{ color: strength.color }}>Security: {strength.text}</span>
-            </>
-          )}
-        </div>
-        <button type="submit" className="btn btn-primary" disabled={loading || (form.password && strength.score < 66)} style={{ marginTop: '10px' }}>
-          {loading ? 'Registering...' : 'Create Account'}
-        </button>
-        {error && <div style={{ color: 'var(--danger)', marginTop: '15px', textAlign: 'center' }}>{error}</div>}
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="w-full max-w-md mx-auto"
+    >
+      <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+        
+        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }} className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">Full Name</label>
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition-colors">
+              <User size={18} />
+            </div>
+            <input
+              name="name"
+              type="text"
+              value={form.name}
+              onChange={handleChange}
+              className="w-full pl-10 pr-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder-gray-400 backdrop-blur-sm"
+              placeholder="John Doe"
+            />
+          </div>
+        </motion.div>
 
-        <div style={{ textAlign: 'center', margin: '20px 0', color: '#6b7280' }}>OR</div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <GoogleLogin
-            onSuccess={handleGoogleSuccess}
-            onError={() => setError('Google Auth Failed')}
-            useOneTap
-          />
+        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">Email Address</label>
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition-colors">
+              <Mail size={18} />
+            </div>
+            <input
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={handleChange}
+              className="w-full pl-10 pr-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder-gray-400 backdrop-blur-sm"
+              placeholder="john@example.com"
+            />
+          </div>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">Password</label>
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition-colors">
+              <Lock size={18} />
+            </div>
+            <input
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              value={form.password}
+              onChange={handleChange}
+              className="w-full pl-10 pr-12 py-3 bg-white/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder-gray-400 backdrop-blur-sm"
+              placeholder="Min 6 chars, 1 uppercase, 1 number"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+          
+          {/* Animated Password Strength Bar */}
+          {form.password && (
+            <div className="pt-1">
+              <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ width: `${strength.score}%`, backgroundColor: strength.color }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  className="h-full rounded-full"
+                />
+              </div>
+              <p className="text-xs font-medium mt-1 text-right" style={{ color: strength.color }}>
+                {strength.text}
+              </p>
+            </div>
+          )}
+        </motion.div>
+
+        {error && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }} 
+            animate={{ opacity: 1, scale: 1 }} 
+            className="p-4 bg-red-50 border border-red-100 rounded-xl flex items-start gap-3 text-red-600 text-sm font-medium"
+          >
+            <AlertCircle size={18} className="shrink-0 mt-0.5" />
+            <p>{error}</p>
+          </motion.div>
+        )}
+
+        <motion.button
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.98 }}
+          type="submit"
+          disabled={loading || (form.password && strength.score < 66)}
+          className="w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-medium shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? (
+            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          ) : (
+            <>Create Account <UserPlus size={18} /></>
+          )}
+        </motion.button>
+
+        <div className="relative flex items-center py-4">
+          <div className="flex-grow border-t border-gray-200"></div>
+          <span className="flex-shrink-0 mx-4 text-gray-400 text-sm font-medium">Or register with</span>
+          <div className="flex-grow border-t border-gray-200"></div>
         </div>
+
+        <motion.div 
+          whileHover={{ scale: 1.01 }}
+          className="flex justify-center w-full"
+        >
+          <div className="w-full flex justify-center [&>div]:w-full">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => setError('Google Auth Failed: Check network connection')}
+              theme="outline"
+              size="large"
+              shape="rectangular"
+              width="100%"
+            />
+          </div>
+        </motion.div>
       </form>
-    </div>
+    </motion.div>
   );
 };
 
