@@ -22,6 +22,15 @@ const contactSchema = new mongoose.Schema({
     email: { type: String, required: true },
     phone: { type: String, required: true },
     message: { type: String },
+    avatarUrl: { type: String },
+    tags: [{ type: String }],
+    socialLinks: {
+        linkedin: { type: String },
+        twitter: { type: String },
+        github: { type: String }
+    },
+    birthday: { type: Date },
+    address: { type: String },
     createdAt: { type: Date, default: Date.now }
 });
 
@@ -53,12 +62,12 @@ app.get('/api/contacts', auth, async (req, res) => {
 // 2. POST: Add new contact
 app.post('/api/contacts', auth, async (req, res) => {
     try {
-        const { name, email, phone, message } = req.body;
+        const { name, email, phone, message, avatarUrl, tags, socialLinks, birthday, address } = req.body;
         // Basic backend validation
         if (!name || !email || !phone) {
             return res.status(400).json({ error: "Please fill required fields" });
         }
-        const newContact = new Contact({ userId: req.user, name, email, phone, message });
+        const newContact = new Contact({ userId: req.user, name, email, phone, message, avatarUrl, tags, socialLinks, birthday, address });
         await newContact.save();
         res.status(201).json(newContact);
     } catch (err) {
