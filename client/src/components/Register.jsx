@@ -43,6 +43,7 @@ const Register = ({ onRegister }) => {
         credential: credentialResponse.credential
       });
       localStorage.setItem('token', res.data.token);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
       toast.success("Account created successfully!");
       if (onRegister) onRegister();
     } catch (err) {
@@ -65,6 +66,7 @@ const Register = ({ onRegister }) => {
     try {
       const res = await axios.post(`${API_URL}/api/auth/register`, form);
       localStorage.setItem('token', res.data.token);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
       toast.success("Welcome to Nexus!");
       if (onRegister) onRegister();
     } catch (err) {

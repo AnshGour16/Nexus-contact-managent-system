@@ -5,6 +5,7 @@ const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
 const { OAuth2Client } = require('google-auth-library');
 const axios = require('axios');
+const auth = require('../middleware/auth');
 
 const router = express.Router();
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -29,7 +30,7 @@ router.post('/register', [
     user = new User({ name, email, password: hashedPassword });
     await user.save();
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
-    res.json({ token });
+    res.json({ token, user: { name: user.name, email: user.email } });
   } catch (err) {
     console.error('Register error:', err);
     res.status(500).json({ error: err.message });
@@ -56,7 +57,7 @@ router.post('/login', [
       return res.status(400).json({ error: 'Invalid credentials' });
     }
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
-    res.json({ token });
+    res.json({ token, user: { name: user.name, email: user.email } });
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).json({ error: err.message });
@@ -80,10 +81,24 @@ router.post('/google', async (req, res) => {
       await user.save();
     }
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
-    res.json({ token });
+    res.json({ token, user: { name: user.name, email: user.email } });
   } catch (err) {
     console.error('Google Auth Error:', err);
     res.status(500).json({ error: 'Failed to authenticate with Google' });
+  }
+});
+
+// Get Current User Profile
+router.get('/me', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user).select('-password');
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json({ name: user.name, email: user.email });
+  } catch (err) {
+    console.error('Get user profile error:', err);
+    res.status(500).json({ error: err.message });
   }
 });
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Users, UserPlus, LogOut, Menu, X, Moon, Sun } from 'lucide-react';
+import axios from 'axios';
 
 const MainLayout = ({ setIsAuthenticated }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -8,8 +9,33 @@ const MainLayout = ({ setIsAuthenticated }) => {
     localStorage.getItem('theme') === 'dark' ||
     (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
   );
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
   const location = useLocation();
   const navigate = useNavigate();
+
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (token) {
+          const res = await axios.get(`${API_URL}/api/auth/me`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          setUser(res.data);
+          localStorage.setItem('user', JSON.stringify(res.data));
+        }
+      } catch (err) {
+        console.error("Error fetching user profile:", err);
+      }
+    };
+
+    fetchUser();
+  }, [API_URL]);
 
   useEffect(() => {
     if (darkMode) {
@@ -23,6 +49,7 @@ const MainLayout = ({ setIsAuthenticated }) => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setIsAuthenticated(false);
     navigate('/login');
   };
@@ -110,8 +137,16 @@ const MainLayout = ({ setIsAuthenticated }) => {
             >
               {darkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-medium border-2 border-white dark:border-gray-800 shadow-sm">
-              U
+            <div className="flex items-center gap-2">
+              <span className="hidden sm:inline text-sm font-medium text-gray-700 dark:text-gray-300">
+                {user ? user.name : 'Loading...'}
+              </span>
+              <div 
+                title={user ? `${user.name} (${user.email})` : 'User'}
+                className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-medium border-2 border-white dark:border-gray-800 shadow-sm"
+              >
+                {user && user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+              </div>
             </div>
           </div>
         </header>

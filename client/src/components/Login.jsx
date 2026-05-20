@@ -28,6 +28,7 @@ const Login = ({ onLogin }) => {
         credential: credentialResponse.credential
       });
       localStorage.setItem('token', res.data.token);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
       toast.success("Successfully logged in!");
       if (onLogin) onLogin();
     } catch (err) {
@@ -50,6 +51,7 @@ const Login = ({ onLogin }) => {
       try {
         const res = await axios.post(`${API_URL}/api/auth/login`, form);
         localStorage.setItem('token', res.data.token);
+        localStorage.setItem('user', JSON.stringify(res.data.user));
         toast.success("Welcome back!");
         if (onLogin) onLogin();
       } catch (err) {
