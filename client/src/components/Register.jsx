@@ -86,9 +86,9 @@ const Register = ({ onRegister }) => {
       <form onSubmit={handleSubmit} className="space-y-5" noValidate>
         
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }} className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Full Name</label>
+          <label className="text-sm font-medium text-indigo-200">Full Name</label>
           <div className="relative group">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition-colors">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-indigo-300/60 group-focus-within:text-indigo-400 transition-colors">
               <User size={18} />
             </div>
             <input
@@ -96,16 +96,16 @@ const Register = ({ onRegister }) => {
               type="text"
               value={form.name}
               onChange={handleChange}
-              className="w-full pl-10 pr-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder-gray-400 backdrop-blur-sm"
+              className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder-indigo-200/40 text-white backdrop-blur-md"
               placeholder="John Doe"
             />
           </div>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Email Address</label>
+          <label className="text-sm font-medium text-indigo-200">Email Address</label>
           <div className="relative group">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition-colors">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-indigo-300/60 group-focus-within:text-indigo-400 transition-colors">
               <Mail size={18} />
             </div>
             <input
@@ -113,16 +113,16 @@ const Register = ({ onRegister }) => {
               type="email"
               value={form.email}
               onChange={handleChange}
-              className="w-full pl-10 pr-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder-gray-400 backdrop-blur-sm"
+              className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder-indigo-200/40 text-white backdrop-blur-md"
               placeholder="john@example.com"
             />
           </div>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Password</label>
+          <label className="text-sm font-medium text-indigo-200">Password</label>
           <div className="relative group">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition-colors">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-indigo-300/60 group-focus-within:text-indigo-400 transition-colors">
               <Lock size={18} />
             </div>
             <input
@@ -130,13 +130,13 @@ const Register = ({ onRegister }) => {
               type={showPassword ? 'text' : 'password'}
               value={form.password}
               onChange={handleChange}
-              className="w-full pl-10 pr-12 py-3 bg-white/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder-gray-400 backdrop-blur-sm"
+              className="w-full pl-10 pr-12 py-3 bg-white/10 border border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder-indigo-200/40 text-white backdrop-blur-md"
               placeholder="Min 6 chars, 1 uppercase, 1 number"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-indigo-300/60 hover:text-indigo-200 transition-colors"
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>

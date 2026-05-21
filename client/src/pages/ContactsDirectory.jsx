@@ -44,6 +44,24 @@ const ContactsDirectory = () => {
     }
   };
 
+  const handleDeleteSelected = async () => {
+    if (selectedContacts.size === 0) return;
+    if (!window.confirm(`Are you sure you want to delete the ${selectedContacts.size} selected contacts?`)) return;
+    try {
+      const token = localStorage.getItem('token');
+      const idsArray = Array.from(selectedContacts);
+      await axios.delete(`${API_URL}/api/contacts`, {
+        headers: { Authorization: `Bearer ${token}` },
+        data: { ids: idsArray }
+      });
+      setContacts(contacts.filter(c => !selectedContacts.has(c._id)));
+      setSelectedContacts(new Set());
+      toast.success("Selected contacts deleted");
+    } catch (error) {
+      toast.error("Error deleting selected contacts");
+    }
+  };
+
   const handleExportCSV = () => {
     if (contacts.length === 0) {
       toast.error("No contacts to export");
@@ -124,7 +142,10 @@ const ContactsDirectory = () => {
         {selectedContacts.size > 0 && (
           <div className="flex items-center gap-2 text-sm">
             <span className="text-gray-600 dark:text-gray-400 font-medium">{selectedContacts.size} selected</span>
-            <button className="px-3 py-1.5 bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors font-medium">
+            <button 
+              onClick={handleDeleteSelected}
+              className="px-3 py-1.5 bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors font-medium"
+            >
               Delete Selected
             </button>
           </div>
@@ -209,7 +230,7 @@ const ContactsDirectory = () => {
                       </div>
                     </td>
                     <td className="p-4 text-right">
-                      <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center justify-end gap-2 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                         <Link to={`/contacts/edit/${contact._id}`} className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors">
                           <Edit2 size={18} />
                         </Link>

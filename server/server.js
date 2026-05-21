@@ -75,7 +75,21 @@ app.post('/api/contacts', auth, async (req, res) => {
     }
 });
 
-// 3. DELETE: Remove contact (Bonus)
+// 3. DELETE: Remove multiple contacts (Bulk)
+app.delete('/api/contacts', auth, async (req, res) => {
+    try {
+        const { ids } = req.body;
+        if (!ids || !Array.isArray(ids) || ids.length === 0) {
+            return res.status(400).json({ error: "Invalid or empty contact IDs array" });
+        }
+        const result = await Contact.deleteMany({ _id: { $in: ids }, userId: req.user });
+        res.json({ message: `Successfully deleted ${result.deletedCount} contacts` });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// 4. DELETE: Remove contact (Bonus)
 app.delete('/api/contacts/:id', auth, async (req, res) => {
     try {
         const contact = await Contact.findOneAndDelete({ _id: req.params.id, userId: req.user });

@@ -31,6 +31,9 @@ const MainLayout = ({ setIsAuthenticated }) => {
         }
       } catch (err) {
         console.error("Error fetching user profile:", err);
+        if (err.response?.status === 401) {
+          handleLogout();
+        }
       }
     };
 
